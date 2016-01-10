@@ -101,7 +101,7 @@ function getOneAcross(def,cons, cb){
         words[i] = $(this).text();
         console.log(words[i]);
       });
-      cb(words);
+      cb(words[0]);
     })
   });
   req.on('error', function(e) {
@@ -270,10 +270,7 @@ controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_ment
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
-        for (i=0; i<words.length-1;i++){
-          console.log(words[i]);
-        }
-        bot.reply(message,"What about " + words[0]);
+        bot.reply(message,"What about " + words);
       }
       getOneAcross(definition, constraint, processWords);
     })
