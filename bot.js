@@ -62,13 +62,13 @@ This bot demonstrates many of the core features of Botkit:
     -> http://howdy.ai/botkit
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-// //AVOID HEROKU BINDING ERROR
-// var http = require('http'); 
-// http.createServer(function (req, res) { 
-//   res.writeHead(200, {'Content-Type': 'text/plain'});
-//   res.send('it is running\n'); 
-// }).listen(process.env.PORT || 5000);
-// //END AVOIDANCE
+//AVOID HEROKU BINDING ERROR
+var http = require('http'); 
+http.createServer(function (req, res) { 
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.send('it is running\n'); 
+}).listen(process.env.PORT || 5000);
+//END AVOIDANCE
 
 var Botkit = require('./lib/Botkit.js')
 var os = require('os');
@@ -283,7 +283,7 @@ controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_ment
   })
 });
 
-//BIND TO HTTP SO HEROKU DOESNT SHUT US DOWN
-controller.setupWebserver(process.env.port || 5000,function(err,webserver) {
-  controller.createWebhookEndpoints(controller.webserver);
-});
+// //BIND TO HTTP SO HEROKU DOESNT SHUT US DOWN
+// controller.setupWebserver(process.env.port || 5000,function(err,webserver) {
+//   controller.createWebhookEndpoints(controller.webserver);
+// });
