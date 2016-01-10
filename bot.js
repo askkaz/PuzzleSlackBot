@@ -98,10 +98,9 @@ function getOneAcross(def,cons, cb){
       $ = cheerio.load(body);
       var words = [];
       $('tt').each(function(i, elem) {
-        words[i] = $(this).text();
-        console.log(words[i]);
+        words.push($(this).text());
       });
-      cb(words[0]);
+      cb(words);
     })
   });
   req.on('error', function(e) {
@@ -270,7 +269,10 @@ controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_ment
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
-        bot.reply(message,"What about " + words);
+        for (i=0; i<words.length-1;i++){
+          console.log(words[i]);
+        }
+        bot.reply(message,"What about " + words[0]);
       }
       getOneAcross(definition, constraint, processWords);
     })
