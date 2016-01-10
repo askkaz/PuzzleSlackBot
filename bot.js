@@ -256,7 +256,7 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
 
 
 
-controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention',function(bot,message) {
+controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
   var matches = message.text.match(/!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)/i);
   var definition = matches[1];
   var constraint = matches[2];
