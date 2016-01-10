@@ -182,18 +182,24 @@ function formatUptime(uptime) {
   return uptime;
 }
 
-controller.hears(['!OA (.*)'],'direct_message,direct_mention,mention',function(bot,message) {
-  var matches = message.text.match(/!OA (.*)/i);
-  var name = matches[1];
-  controller.storage.users.get(message.user,function(err,user) {
-    if (!user) {
-      user = {
-        id: message.user,
-      }
+controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function(bot,message) {
+
+  bot.api.reactions.add({
+    timestamp: message.ts,
+    channel: message.channel,
+    name: 'robot_face',
+  },function(err,res) {
+    if (err) {
+      bot.botkit.log("Failed to add emoji reaction :(",err);
     }
-    // user.name = name;
-    controller.storage.users.save(user,function(err,id) {
-      bot.reply(message,"Got it. I will call you " + name + " from now on.");
-    })
-  })
-});
+  });
+
+
+  controller.storage.users.get(message.user,function(err,user) {
+    if (user && user.name) {
+      bot.reply(message,"Hello " + user.name+"!!");
+    } else {
+      bot.reply(message,"Hello.");
+    }
+  });
+})
