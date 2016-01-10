@@ -62,16 +62,56 @@ This bot demonstrates many of the core features of Botkit:
     -> http://howdy.ai/botkit
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
-//AVOID HEROKU BINDING ERROR
-var http = require('http'); 
-http.createServer(function (req, res) { 
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.send('it is running\n'); 
-}).listen(process.env.PORT || 5000);
-//END AVOIDANCE
+// //AVOID HEROKU BINDING ERROR
+// var http = require('http'); 
+// http.createServer(function (req, res) { 
+//   res.writeHead(200, {'Content-Type': 'text/plain'});
+//   res.send('it is running\n'); 
+// }).listen(process.env.PORT || 5000);
+// //END AVOIDANCE
 
 var Botkit = require('./lib/Botkit.js')
 var os = require('os');
+var http = require('http');
+var cheerio = require('cheerio');
+
+
+function getOneAcross(def,cons, cb){
+  var options = {
+    host: 'www3.oneacross.com',
+    path: '/cgi-bin/search_banner.cgi?c0='+encodeURIComponent(def)+'&p0='+ encodeURIComponent(cons)+'&s=+Go%21+'
+  };
+  console.log(def);
+  console.log(cons);
+  var result ='';
+  var req = http.get(options, function(res) {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    // Buffer the body entirely for processing as a whole.
+    var bodyChunks = [];
+    res.on('data', function(chunk) {
+      // You can process streamed parts here...
+      bodyChunks.push(chunk);
+    });
+    res.on('end', function() {
+      var body = Buffer.concat(bodyChunks);
+      $ = cheerio.load(body);
+      var words = [];
+      $('tt').each(function(i, elem) {
+        words[i] = $(this).text();
+        console.log(words[i]);
+      });
+      cb(words);
+    })
+  });
+  req.on('error', function(e) {
+    console.log('ERROR: ' + e.message);
+    return "fail";
+  });
+
+  return result;
+}
+
 
 var controller = Botkit.slackbot({
   debug: false,
@@ -108,6 +148,10 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
 
 controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',function(bot,message) {
   var matches = message.text.match(/call me (.*)/i);
+  var output = '';
+  for (var i = 0; i < matches.length; i++) {
+    output = output.concat(i, matches[i]);
+  }
   var name = matches[1];
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
@@ -117,7 +161,7 @@ controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',functi
     }
     user.name = name;
     controller.storage.users.save(user,function(err,id) {
-      bot.reply(message,"Got it. I will call you " + user.name + " from now on.");
+      bot.reply(message,"Got it. I will call you " + output + " from now on.");
     })
   })
 });
@@ -209,3 +253,37 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
     }
   });
 })
+
+
+
+
+controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention',function(bot,message) {
+  var matches = message.text.match(/!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)/i);
+  var definition = matches[1];
+  var constraint = matches[2];
+  
+  controller.storage.users.get(message.user,function(err,user) {
+    if (!user) {
+      user = {
+        id: message.user,
+      }
+    }
+    controller.storage.users.save(user,function(err,id) {
+      function processWords(words){
+        for (i=0; i<words.length-1;i++){
+          console.log(words[i]);
+        }
+        bot.reply(message,"What about " + words[0]);
+      }
+      getOneAcross(definition, constraint, processWords);
+    })
+
+
+
+  })
+});
+
+//BIND TO HTTP SO HEROKU DOESNT SHUT US DOWN
+controller.setupWebserver(process.env.port || 5000,function(err,webserver) {
+  controller.createWebhookEndpoints(controller.webserver);
+});
