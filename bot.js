@@ -181,3 +181,19 @@ function formatUptime(uptime) {
   uptime = uptime + ' ' + unit;
   return uptime;
 }
+
+controller.hears(['!OA (.*)'],'direct_message,direct_mention,mention',function(bot,message) {
+  var matches = message.text.match(/!OA (.*)/i);
+  var name = matches[1];
+  controller.storage.users.get(message.user,function(err,user) {
+    if (!user) {
+      user = {
+        id: message.user,
+      }
+    }
+    // user.name = name;
+    controller.storage.users.save(user,function(err,id) {
+      bot.reply(message,"Got it. I will call you " + name + " from now on.");
+    })
+  })
+});
