@@ -74,6 +74,7 @@ var Botkit = require('./lib/Botkit.js')
 var os = require('os');
 var http = require('http');
 var cheerio = require('cheerio');
+var StringDecoder = require('string_decoder').StringDecoder;
 
 
 function getOneAcross(def,cons, cb){
@@ -111,6 +112,45 @@ function getOneAcross(def,cons, cb){
   return result;
 }
 
+function getNutrimatic(query, cb){
+  var options = {
+    host: 'www.nutrimatic.org',
+    path: '/?q='+query
+  };
+  console.log(query);
+  var result ='';
+  var req = http.get(options, function(res) {
+    console.log('STATUS: ' + res.statusCode);
+    console.log('HEADERS: ' + JSON.stringify(res.headers));
+    //console.log('Body: ' + res.body);
+    // Buffer the body entirely for processing as a whole.
+    var body ='';
+    res.setEncoding('utf8');
+    res.on('data', function(chunk) {
+      // You can process streamed parts here...
+      //var textChunk = decoder.write(chunk);
+      body = body.concat(chunk);
+      //console.log(chunk);
+    });
+    res.on('end', function() {
+      console.log(body);
+      // var body = Buffer.concat(bodyChunks);
+      $ = cheerio.load(body);
+      console.log(body);
+      var words = [];
+      $('span').each(function(i, elem) {
+        words.push($(this).text());
+      });
+      cb(words);
+    })
+  });
+  req.on('error', function(e) {
+    console.log('ERROR: ' + e.message);
+    return "fail";
+  });
+
+  return result;
+}
 
 var controller = Botkit.slackbot({
   debug: false,
@@ -255,7 +295,7 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
 
 
 
-
+//ONE ACROSS
 controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
   var matches = message.text.match(/!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)/i);
   var definition = matches[1];
@@ -276,13 +316,30 @@ controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_ment
       }
       getOneAcross(definition, constraint, processWords);
     })
-
-
-
   })
 });
 
-// //BIND TO HTTP SO HEROKU DOESNT SHUT US DOWN
-// controller.setupWebserver(process.env.port || 5000,function(err,webserver) {
-//   controller.createWebhookEndpoints(controller.webserver);
-// });
+//NUTRIMATIC
+controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
+  var matches = message.text.match(/!NM (.*)/i);
+  var query = matches[1];
+  query = query.replace("&lt;","<");
+  query = query.replace("&gt;",">");
+  controller.storage.users.get(message.user,function(err,user) {
+    if (!user) {
+      user = {
+        id: message.user,
+      }
+    }
+    controller.storage.users.save(user,function(err,id) {
+      function processQuery(query){
+        for (i=0; i<query.length-1;i++){
+          console.log(query[i]);
+        }
+        bot.reply(message,"What about " + query[0]);
+      }
+      getNutrimatic(query, processQuery);
+    })
+  })
+});
+
