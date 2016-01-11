@@ -325,9 +325,9 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
   var query = matches[1];
   query = query.replace("&lt;","<");
   query = query.replace("&gt;",">");
-  query = query.replace(/ /g,"%20");
-  query = query.replace(/"/g,"%22");
-  //query = encodeURI(query);
+  //query = query.replace(/ /g,"%20");
+  //query = query.replace(/"/g,"%22");
+  query = encodeURI(query);
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
       user = {
@@ -336,10 +336,16 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     }
     controller.storage.users.save(user,function(err,id) {
       function processQuery(query){
-        for (i=0; i<query.length-1;i++){
-          console.log(query[i]);
+        numResults = 5;
+        if (query.length < numResults){
+          numResults = query.length;
         }
-        bot.reply(message,"What about " + query[0]);
+        if (numResults > 0) {
+          bot.reply(message,"Top five results: " + query.slice(0,numResults).join(', '));
+        }
+        else {
+          bot.reply(message,"No good results. Ask Ricky.");
+        }
       }
       getNutrimatic(query, processQuery);
     })
