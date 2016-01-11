@@ -143,10 +143,10 @@ function getNutrimatic(query, cb){
       //console.log(chunk);
     });
     res.on('end', function() {
-      console.log(body);
+      //console.log(body);
       // var body = Buffer.concat(bodyChunks);
       $ = cheerio.load(body);
-      console.log(body);
+      //console.log(body);
       var words = [];
       $('span').each(function(i, elem) {
         words.push($(this).text());
@@ -311,7 +311,7 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
   
   var definition = matches[1];
   var constraint = matches[2];
-  
+
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
       user = {
