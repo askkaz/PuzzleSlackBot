@@ -72,7 +72,7 @@ http.createServer(function (req, res) {
 
 var Botkit = require('./lib/Botkit.js')
 var os = require('os');
-var http = require('http');
+var http = require('follow-redirects').http;
 var cheerio = require('cheerio');
 var StringDecoder = require('string_decoder').StringDecoder;
 
@@ -325,6 +325,9 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
   var query = matches[1];
   query = query.replace("&lt;","<");
   query = query.replace("&gt;",">");
+  query = query.replace(/ /g,"%20");
+  query = query.replace(/"/g,"%22");
+  //query = encodeURI(query);
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
       user = {
