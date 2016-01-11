@@ -320,8 +320,10 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
-        words.pop();
-        words.pop();
+        if (words[words.length-1]=='B???'){
+          words.pop();
+          words.pop();
+        }
         bot.reply(message,"Results: " + words.join(', '));
       }
       getOneAcross(definition, constraint, processWords);
