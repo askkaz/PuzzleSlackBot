@@ -99,7 +99,17 @@ function getOneAcross(def,cons, cb){
       $ = cheerio.load(body);
       var words = [];
       $('tt').each(function(i, elem) {
-        words.push($(this).text());
+        // var thisWord = $(this).text();
+        var starEmoji = ":star:";
+        var stars = 0;
+        $(this).parent().siblings().first().children().each(function(i, elem) {
+          if ($(this).attr('src')=="/images/smallstarblack.gif"){
+            stars++;
+          }
+        });
+        // console.log(thisWord + ' ' + stars);
+
+        words.push(starEmoji.repeat(stars) + $(this).text());
       });
       cb(words);
     })
@@ -309,10 +319,9 @@ controller.hears(['!OA ([a-zA-Z]*) ([a-zA-Z0-9?]*)'],'direct_message,direct_ment
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
-        for (i=0; i<words.length-1;i++){
-          console.log(words[i]);
-        }
-        bot.reply(message,"What about " + words[0]);
+        words.pop();
+        words.pop();
+        bot.reply(message,"Results: " + words.join(', '));
       }
       getOneAcross(definition, constraint, processWords);
     })
