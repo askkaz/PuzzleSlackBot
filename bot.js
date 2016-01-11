@@ -356,6 +356,13 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     controller.storage.users.save(user,function(err,id) {
       function processQuery(query){
         numResults = 5;
+        random_num = Math.random();
+        if (random_num < 0.01) {
+          bot.reply(message,"All your base are belong to us.");
+        } else if (random_num < 0.02) {
+          bot.reply(message,"Please welcome your new bot masters.");
+        }
+
         if (query.length < numResults){
           numResults = query.length;
         }
