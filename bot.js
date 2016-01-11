@@ -338,6 +338,7 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
   //query = query.replace(/ /g,"%20");
   //query = query.replace(/"/g,"%22");
   query = encodeURI(query);
+  query = query.replace(/&amp;/g,"%26");
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
       user = {
