@@ -332,13 +332,19 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
 //NUTRIMATIC
 controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
   var matches = message.text.match(/!NM (.*)/i);
+  //console.log(matches);
   var query = matches[1];
-  query = query.replace("&lt;","<");
-  query = query.replace("&gt;",">");
-  //query = query.replace(/ /g,"%20");
+  //console.log(query);
+  query = query.replace(/&lt;/g,"<");
+  query = query.replace(/&gt;/g,">");
+  query = query.replace(/ /g,"%20");
+  query = query.replace(/\*/g,"%2A");
   //query = query.replace(/"/g,"%22");
-  query = encodeURI(query);
+  //query = encodeURI(query);
   query = query.replace(/&amp;/g,"%26");
+  query = query.replace(/&amp;/g,"%26");
+  query = query.replace(/#/g,"%23");
+  console.log(query);
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
       user = {
