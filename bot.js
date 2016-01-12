@@ -75,12 +75,9 @@ http.createServer(function (req, res) {
         console.log("POST");
         var body = '';
         console.log(JSON.stringify(req.headers));
-        var url_parts = url.parse(req.url, true);
-        var query = url_parts.query;
-        console.log(query);
         req.on('data', function (data) {
             body += data;
-            //console.log("Partial body: " + body);
+            console.log("Partial body: " + body);
         });
         req.on('end', function () {
             console.log("Body: " + body);
