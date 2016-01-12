@@ -75,7 +75,6 @@ http.createServer(function (req, res) {
         console.log("POST");
         var body = '';
         console.log(JSON.stringify(req.headers));
-        console.log(req.query.channel_id);
         req.on('data', function (data) {
             body += data;
             //console.log("Partial body: " + body);
