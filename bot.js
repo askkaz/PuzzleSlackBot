@@ -63,18 +63,41 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 //AVOID HEROKU BINDING ERROR
-var http = require('http'); 
+var Botkit = require('./lib/Botkit.js')
+var os = require('os');
+var http = require('follow-redirects').http;
+var cheerio = require('cheerio');
+var request = require('request');
+var StringDecoder = require('string_decoder').StringDecoder;
+var url = require('url'); 
 http.createServer(function (req, res) { 
   if (req.method == 'POST') {
         console.log("POST");
         var body = '';
-        console.log(JSON.stringify(req.headers));
+        //console.log(JSON.stringify(req.headers));
         req.on('data', function (data) {
             body += data;
-            console.log("Partial body: " + body);
+            //console.log("Partial body: " + body);
         });
         req.on('end', function () {
             console.log("Body: " + body);
+            body_dict = url.parse('http://www.foo.com/?'+body,true);
+            channel_id = body_dict.query.channel_id;
+            channel_name = body_dict.query.channel_name;
+            text = body_dict.query.text;
+            new_channel_name = text + '-' + channel_name;
+            slack_token = process.env.slack_token;
+            //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+            request.post(
+                'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+                {},
+                function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        console.log(body)
+                    }
+                }
+            );
+
         });
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('post received');
@@ -90,11 +113,7 @@ http.createServer(function (req, res) {
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
 
-var Botkit = require('./lib/Botkit.js')
-var os = require('os');
-var http = require('follow-redirects').http;
-var cheerio = require('cheerio');
-var StringDecoder = require('string_decoder').StringDecoder;
+
 
 
 function getOneAcross(def,cons, cb){
