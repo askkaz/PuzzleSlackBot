@@ -346,6 +346,8 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
   query = query.replace(/&amp;/g,"%26");
   query = query.replace(/&amp;/g,"%26");
   query = query.replace(/#/g,"%23");
+  query = query.replace(/“/g,'"');
+  query = query.replace(/”/g,'"');
   console.log(query);
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
