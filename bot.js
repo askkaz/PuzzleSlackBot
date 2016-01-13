@@ -107,10 +107,9 @@ http.createServer(function (req, res) {
         console.log("GET");
         var body = '';
         console.log(JSON.stringify(req.headers));
-        body_dict = req.query
-        channel_id = body_dict.query.channel_id;
-        channel_name = body_dict.query.channel_name;
-        text = body_dict.query.text;
+        channel_id = req.query.channel_id;
+        channel_name = req.query.channel_name;
+        text = req.query.text;
         new_channel_name = text + '-' + channel_name;
         slack_token = process.env.slack_token;
         //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
