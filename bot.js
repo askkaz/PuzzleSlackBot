@@ -70,6 +70,14 @@ var cheerio = require('cheerio');
 var request = require('request');
 var StringDecoder = require('string_decoder').StringDecoder;
 var url = require('url'); 
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
 http.createServer(function (req, res) { 
   if (req.method == 'POST') {
         console.log("POST");
@@ -130,24 +138,25 @@ http.createServer(function (req, res) {
                   }
               }
           );
-          // request.post(
-          //     'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
-          //     {},
-          //     function (error, response, body) {
-          //         if (!error && response.statusCode == 200) {
-          //             console.log("Success!")
-          //         }
-          //     }
-          // );
-          // request.post(
-          //     'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
-          //     {},
-          //     function (error, response, body) {
-          //         if (!error && response.statusCode == 200) {
-          //             console.log("Success!")
-          //         }
-          //     }
-          // );
+          sleep(1000);
+          request.post(
+              'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("Success!")
+                  }
+              }
+          );
+          request.post(
+              'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("Success!")
+                  }
+              }
+          );
           res.writeHead(200, {'Content-Type': 'text/html'});
           res.end('post received');
         }
