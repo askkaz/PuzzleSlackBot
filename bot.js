@@ -130,24 +130,24 @@ http.createServer(function (req, res) {
                   }
               }
           );
-          request.post(
-              'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
-              {},
-              function (error, response, body) {
-                  if (!error && response.statusCode == 200) {
-                      console.log("Success!")
-                  }
-              }
-          );
-          request.post(
-              'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
-              {},
-              function (error, response, body) {
-                  if (!error && response.statusCode == 200) {
-                      console.log("Success!")
-                  }
-              }
-          );
+          // request.post(
+          //     'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+          //     {},
+          //     function (error, response, body) {
+          //         if (!error && response.statusCode == 200) {
+          //             console.log("Success!")
+          //         }
+          //     }
+          // );
+          // request.post(
+          //     'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
+          //     {},
+          //     function (error, response, body) {
+          //         if (!error && response.statusCode == 200) {
+          //             console.log("Success!")
+          //         }
+          //     }
+          // );
           res.writeHead(200, {'Content-Type': 'text/html'});
           res.end('post received');
         }
