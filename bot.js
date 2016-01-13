@@ -105,10 +105,26 @@ http.createServer(function (req, res) {
     else
     {
         console.log("GET");
-        //var html = '<html><body><form method="post" action="http://localhost:3000">Name: <input type="text" name="name" /><input type="submit" value="Submit" /></form></body>';
-        //var html = fs.readFileSync('index.html');
+        var body = '';
+        console.log(JSON.stringify(req.headers));
+        body_dict = req.query
+        channel_id = body_dict.query.channel_id;
+        channel_name = body_dict.query.channel_name;
+        text = body_dict.query.text;
+        new_channel_name = text + '-' + channel_name;
+        slack_token = process.env.slack_token;
+        //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+        request.post(
+            'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+            {},
+            function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    console.log("error")
+                }
+            }
+        );
         res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end("hello");
+        res.end('post received');
     }
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
