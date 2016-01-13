@@ -70,14 +70,14 @@ var cheerio = require('cheerio');
 var request = require('request');
 var StringDecoder = require('string_decoder').StringDecoder;
 var url = require('url'); 
-function sleep(milliseconds) {
-  var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
-}
+// function sleep(milliseconds) {
+//   var start = new Date().getTime();
+//   for (var i = 0; i < 1e7; i++) {
+//     if ((new Date().getTime() - start) > milliseconds){
+//       break;
+//     }
+//   }
+// }
 http.createServer(function (req, res) { 
   if (req.method == 'POST') {
         console.log("POST");
@@ -128,17 +128,17 @@ http.createServer(function (req, res) {
           }
         }
         if (mutable){
-          //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
-          request.post(
-              'https://slack.com/api/chat.postMessage?token='+slack_token+'&channel='+ channel_id +'&text=http://45.media.tumblr.com/tumblr_m5br53wRjA1rpugqso1_250.gif&pretty=1',
-              {},
-              function (error, response, body) {
-                  if (!error && response.statusCode == 200) {
-                      console.log("Success!")
-                  }
-              }
-          );
-          sleep(3000);
+          // //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+          // request.post(
+          //     'https://slack.com/api/chat.postMessage?token='+slack_token+'&channel='+ channel_id +'&text=http://45.media.tumblr.com/tumblr_m5br53wRjA1rpugqso1_250.gif&pretty=1',
+          //     {},
+          //     function (error, response, body) {
+          //         if (!error && response.statusCode == 200) {
+          //             console.log("Success!")
+          //         }
+          //     }
+          // );
+          // sleep(3000);
           request.post(
               'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
               {},
