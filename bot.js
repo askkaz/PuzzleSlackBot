@@ -126,7 +126,16 @@ http.createServer(function (req, res) {
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
-                      console.log("error")
+                      console.log("Success!")
+                  }
+              }
+          );
+          request.post(
+              'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("Success!")
                   }
               }
           );
