@@ -106,7 +106,7 @@ http.createServer(function (req, res) {
     {
         console.log("GET");
         console.log(JSON.stringify(req.headers));
-        var query_data = url.parse(request.url, true).query;
+        var query_data = url.parse(req.url, true).query;
         var channel_id = query_data.channel_id;
         var channel_name = query_data.channel_name;
         var text = query_data.text;
