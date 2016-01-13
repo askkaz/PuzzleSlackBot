@@ -138,7 +138,7 @@ http.createServer(function (req, res) {
                   }
               }
           );
-          sleep(1000);
+          sleep(3000);
           request.post(
               'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
               {},
