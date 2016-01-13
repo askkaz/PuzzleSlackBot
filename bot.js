@@ -122,7 +122,7 @@ http.createServer(function (req, res) {
         if (mutable){
           //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
           request.post(
-              'https://slack.com/api/chat.postMessage?token='+slack_token+'&channel='+ channel_id +'text=http://45.media.tumblr.com/tumblr_m5br53wRjA1rpugqso1_250.gif&pretty=1',
+              'https://slack.com/api/chat.postMessage?token='+slack_token+'&channel='+ channel_id +'&text=http://45.media.tumblr.com/tumblr_m5br53wRjA1rpugqso1_250.gif&pretty=1',
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
