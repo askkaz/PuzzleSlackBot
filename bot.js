@@ -105,13 +105,13 @@ http.createServer(function (req, res) {
     else
     {
         console.log("GET");
-        var body = '';
         console.log(JSON.stringify(req.headers));
-        channel_id = req.query.channel_id;
-        channel_name = req.query.channel_name;
-        text = req.query.text;
-        new_channel_name = text + '-' + channel_name;
-        slack_token = process.env.slack_token;
+        var query_data = url.parse(request.url, true).query;
+        var channel_id = query_data.channel_id;
+        var channel_name = query_data.channel_name;
+        var text = query_data.text;
+        var new_channel_name = text + '-' + channel_name;
+        var slack_token = process.env.slack_token;
         //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
         request.post(
             'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
