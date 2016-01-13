@@ -112,18 +112,32 @@ http.createServer(function (req, res) {
         var text = query_data.text;
         var new_channel_name = text + '-' + channel_name;
         var slack_token = process.env.slack_token;
-        //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
-        request.post(
-            'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
-            {},
-            function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    console.log("error")
-                }
-            }
-        );
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end('post received');
+        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD']
+        var mutable = true
+        for (var i = 0; i < excluded_channels.length; i++) {
+          if (excluded_channels[i] === channel_id) {
+            mutable = false;
+          }
+        }
+        if (mutable){
+          //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+          request.post(
+              'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("error")
+                  }
+              }
+          );
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end('post received');
+        }
+        else {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end("You can't solve this channel");
+        }
+
     }
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
