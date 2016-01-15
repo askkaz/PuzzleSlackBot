@@ -167,25 +167,15 @@ http.createServer(function (req, res) {
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
 
-function caesarShift (str, amount) {
-	if (amount < 0)
-		return caesarShift(str, amount + 26);
-
-	var output = '';
-
-	for (var i = 0; i < str.length; i ++) {
-		var c = str[i];
-
-		if (c.match(/[a-z]/i)) {
-			var code = str.charCodeAt(i);
-			if ((code >= 65) && (code <= 90))
-				c = String.fromCharCode(((code - 65 + amount) % 26) + 65);
-			else if ((code >= 97) && (code <= 122))
-				c = String.fromCharCode(((code - 97 + amount) % 26) + 97);
-		}
-		output += c;
+function caesarShift (text, shift) {
+  var result = "";
+	for (var i = 0; i < text.length; i++) {
+		var c = text.charCodeAt(i);
+		if      (c >= 65 && c <=  90) result += String.fromCharCode((c - 65 + shift) % 26 + 65);  // Uppercase
+		else if (c >= 97 && c <= 122) result += String.fromCharCode((c - 97 + shift) % 26 + 97);  // Lowercase
+		else                          result += text.charAt(i);  // Copy
 	}
-	return output;
+	return result;
 }
 
 
