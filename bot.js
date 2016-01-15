@@ -69,7 +69,7 @@ var http = require('follow-redirects').http;
 var cheerio = require('cheerio');
 var request = require('request');
 var StringDecoder = require('string_decoder').StringDecoder;
-var url = require('url'); 
+var url = require('url');
 // function sleep(milliseconds) {
 //   var start = new Date().getTime();
 //   for (var i = 0; i < 1e7; i++) {
@@ -78,7 +78,7 @@ var url = require('url');
 //     }
 //   }
 // }
-http.createServer(function (req, res) { 
+http.createServer(function (req, res) {
   if (req.method == 'POST') {
         console.log("POST");
         var body = '';
@@ -105,8 +105,6 @@ http.createServer(function (req, res) {
                     }
                 }
             );
-
-function CaesarCipher(str, num) {
         });
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('post received');
@@ -165,7 +163,11 @@ function CaesarCipher(str, num) {
           res.writeHead(200, {'Content-Type': 'text/html'});
           res.end("You can't solve this channel");
         }
+    }
+}).listen(process.env.PORT || 5000);
+//END AVOIDANCE
 
+function CaesarCipher(str, num) {
     str = str.toLowerCase();
     var result = '';
     var charcode = 0;
@@ -177,12 +179,6 @@ function CaesarCipher(str, num) {
     return result;
 
 }
-
-    }
-}).listen(process.env.PORT || 5000);
-//END AVOIDANCE
-
-
 
 
 function getOneAcross(def,cons, cb){
