@@ -69,7 +69,7 @@ var http = require('follow-redirects').http;
 var cheerio = require('cheerio');
 var request = require('request');
 var StringDecoder = require('string_decoder').StringDecoder;
-var url = require('url'); 
+var url = require('url');
 // function sleep(milliseconds) {
 //   var start = new Date().getTime();
 //   for (var i = 0; i < 1e7; i++) {
@@ -78,7 +78,7 @@ var url = require('url');
 //     }
 //   }
 // }
-http.createServer(function (req, res) { 
+http.createServer(function (req, res) {
   if (req.method == 'POST') {
         console.log("POST");
         var body = '';
@@ -101,11 +101,10 @@ http.createServer(function (req, res) {
                 {},
                 function (error, response, body) {
                     if (!error && response.statusCode == 200) {
-                        console.log(body)
+                        console.log(body);
                     }
                 }
             );
-
         });
         res.writeHead(200, {'Content-Type': 'text/html'});
         res.end('post received');
@@ -120,8 +119,8 @@ http.createServer(function (req, res) {
         var text = query_data.text;
         var new_channel_name = text + '-' + channel_name;
         var slack_token = process.env.slack_token;
-        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD']
-        var mutable = true
+        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD'];
+        var mutable = true;
         for (var i = 0; i < excluded_channels.length; i++) {
           if (excluded_channels[i] === channel_id) {
             mutable = false;
@@ -144,7 +143,7 @@ http.createServer(function (req, res) {
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
-                      console.log("Success!")
+                      console.log("Success!");
                   }
               }
           );
@@ -153,7 +152,7 @@ http.createServer(function (req, res) {
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
-                      console.log("Success!")
+                      console.log("Success!");
                   }
               }
           );
@@ -164,12 +163,20 @@ http.createServer(function (req, res) {
           res.writeHead(200, {'Content-Type': 'text/html'});
           res.end("You can't solve this channel");
         }
-
     }
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
 
-
+function caesarShift (text, shift) {
+  var result = "";
+	for (var i = 0; i < text.length; i++) {
+		var c = text.charCodeAt(i);
+		if      (c >= 65 && c <=  90) result += String.fromCharCode((c - 65 + shift) % 26 + 65);  // Uppercase
+		else if (c >= 97 && c <= 122) result += String.fromCharCode((c - 97 + shift) % 26 + 97);  // Lowercase
+		else                          result += text.charAt(i);  // Copy
+	}
+	return result;
+}
 
 
 function getOneAcross(def,cons, cb){
@@ -207,7 +214,7 @@ function getOneAcross(def,cons, cb){
         words.push(starEmoji.repeat(stars) + $(this).text());
       });
       cb(words);
-    })
+    });
   });
   req.on('error', function(e) {
     console.log('ERROR: ' + e.message);
@@ -247,7 +254,7 @@ function getNutrimatic(query, cb){
         words.push($(this).text());
       });
       cb(words);
-    })
+    });
   });
   req.on('error', function(e) {
     console.log('ERROR: ' + e.message);
@@ -288,7 +295,7 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
       bot.reply(message,"Hello.");
     }
   });
-})
+});
 
 controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',function(bot,message) {
   var matches = message.text.match(/call me (.*)/i);
@@ -301,13 +308,13 @@ controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',functi
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     user.name = name;
     controller.storage.users.save(user,function(err,id) {
       bot.reply(message,"Got it. I will call you " + output + " from now on.");
-    })
-  })
+    });
+  });
 });
 
 controller.hears(['what is my name','who am i'],'direct_message,direct_mention,mention',function(bot,message) {
@@ -318,7 +325,7 @@ controller.hears(['what is my name','who am i'],'direct_message,direct_mention,m
     } else {
       bot.reply(message,"I don't know yet!");
     }
-  })
+  });
 });
 
 
@@ -344,9 +351,9 @@ controller.hears(['shutdown'],'direct_message,direct_mention,mention',function(b
           convo.next();
         }
       }
-    ])
-  })
-})
+    ]);
+  });
+});
 
 
 controller.hears(['uptime','identify yourself','who are you','what is your name'],'direct_message,direct_mention,mention',function(bot,message) {
@@ -356,7 +363,7 @@ controller.hears(['uptime','identify yourself','who are you','what is your name'
 
   bot.reply(message,':robot_face: I am a bot named <@' + bot.identity.name +'>. I have been running for ' + uptime + ' on ' + hostname + ".");
 
-})
+});
 
 function formatUptime(uptime) {
   var unit = 'second';
@@ -398,12 +405,30 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
   });
 })
 
+//Caesar Cipher
+controller.hears(['!ROT ([0-9]*) (.*)'],'direct_message,direct_mention,mention,ambient',function(bot,message){
+  var matches = message.text.match(/!ROT ([0-9]*) (.*)/i);
 
+  var rotateBy = matches[1];
+  var word = matches[2];
+
+  controller.storage.users.get(message.user,function(err,user) {
+    if (!user) {
+      user = {
+        id: message.user,
+      };
+    }
+    controller.storage.users.save(user,function(err,id) {
+      var rotWord = caesarShift(word, parseInt(rotateBy));
+      bot.reply(message, "Rotated by " + rotateBy + ": " + rotWord);
+    });
+  });
+});
 
 //ONE ACROSS
 controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
   var matches = message.text.match(/!OA (.*) ([a-zA-Z0-9?]*)/i);
-  
+
   var definition = matches[1];
   var constraint = matches[2];
 
@@ -411,7 +436,7 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
@@ -422,8 +447,8 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
         bot.reply(message,"Results: " + words.join(', '));
       }
       getOneAcross(definition, constraint, processWords);
-    })
-  })
+    });
+  });
 });
 
 //NUTRIMATIC
@@ -448,7 +473,7 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     controller.storage.users.save(user,function(err,id) {
       function processQuery(query){
@@ -471,7 +496,6 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
         }
       }
       getNutrimatic(query, processQuery);
-    })
-  })
+    });
+  });
 });
-
