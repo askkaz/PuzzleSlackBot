@@ -419,7 +419,6 @@ controller.hears(['!ROT ([0-9]*) ([a-zA-Z?]*)'],'direct_message,direct_mention,m
       };
     }
     controller.storage.users.save(user,function(err,id) {
-      word = word.toUpperCase();
       var rotWord = caesarShift(word, rotateBy);
       bot.reply(message, "Rotated by " + rotateBy + ": " + rotWord);
     });
