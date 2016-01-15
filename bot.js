@@ -63,10 +63,10 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 //AVOID HEROKU BINDING ERROR
-var http = require('http'); 
-http.createServer(function (req, res) { 
+var http = require('http');
+http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.send('it is running\n'); 
+  res.send('it is running\n');
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
 
@@ -76,6 +76,19 @@ var http = require('follow-redirects').http;
 var cheerio = require('cheerio');
 var StringDecoder = require('string_decoder').StringDecoder;
 
+function CaesarCipher(str, num) {
+
+    str = str.toLowerCase();
+    var result = '';
+    var charcode = 0;
+
+    for (i = 0; i < str.length; i++) {
+        charcode = (str[i].charCodeAt()) + num;
+        result += String.fromCharCode(charcode);
+    }
+    return result;
+
+}
 
 function getOneAcross(def,cons, cb){
   var options = {
@@ -303,12 +316,31 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
   });
 })
 
+//Caesar Cipher
+controller.hears(['!ROT ([0-9]*) ([a-zA-Z?]*)'],'direct_message,direct_mention,mention,ambient',function(bot,message){
+  var matches = message.text.match(/!ROT ([0-9]*) ([a-zA-Z?]*)/i);
 
+  var rotateBy = matches[1];
+  var word = matches[2];
+
+  controller.storage.users.get(message.user,function(err,user) {
+    if (!user) {
+      user = {
+        id: message.user,
+      };
+    }
+    controller.storage.users.save(user,function(err,id) {
+      word = word.toUpperCase();
+      var rotWord = CaesarCipher(word, rotateBy);
+      bot.reply(message, "Rotated by " + rotateBy + ": " + rotWord);
+    });
+  });
+});
 
 //ONE ACROSS
 controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,mention,ambient',function(bot,message) {
   var matches = message.text.match(/!OA (.*) ([a-zA-Z0-9?]*)/i);
-  
+
   var definition = matches[1];
   var constraint = matches[2];
 
@@ -368,4 +400,3 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     })
   })
 });
-
