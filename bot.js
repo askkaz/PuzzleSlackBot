@@ -63,20 +63,108 @@ This bot demonstrates many of the core features of Botkit:
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*/
 //AVOID HEROKU BINDING ERROR
-var http = require('http');
-http.createServer(function (req, res) {
-  res.writeHead(200, {'Content-Type': 'text/plain'});
-  res.send('it is running\n');
-}).listen(process.env.PORT || 5000);
-//END AVOIDANCE
-
 var Botkit = require('./lib/Botkit.js')
 var os = require('os');
 var http = require('follow-redirects').http;
 var cheerio = require('cheerio');
+var request = require('request');
 var StringDecoder = require('string_decoder').StringDecoder;
+var url = require('url'); 
+// function sleep(milliseconds) {
+//   var start = new Date().getTime();
+//   for (var i = 0; i < 1e7; i++) {
+//     if ((new Date().getTime() - start) > milliseconds){
+//       break;
+//     }
+//   }
+// }
+http.createServer(function (req, res) { 
+  if (req.method == 'POST') {
+        console.log("POST");
+        var body = '';
+        console.log(JSON.stringify(req.headers));
+        req.on('data', function (data) {
+            body += data;
+            console.log("Partial body: " + body);
+        });
+        req.on('end', function () {
+            console.log("Body: " + body);
+            body_dict = url.parse('http://www.foo.com/?'+body,true);
+            channel_id = body_dict.query.channel_id;
+            channel_name = body_dict.query.channel_name;
+            text = body_dict.query.text;
+            new_channel_name = text + '-' + channel_name;
+            slack_token = process.env.slack_token;
+            //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+            request.post(
+                'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+                {},
+                function (error, response, body) {
+                    if (!error && response.statusCode == 200) {
+                        console.log(body)
+                    }
+                }
+            );
 
 function CaesarCipher(str, num) {
+        });
+        res.writeHead(200, {'Content-Type': 'text/html'});
+        res.end('post received');
+    }
+    else
+    {
+        console.log("GET");
+        console.log(JSON.stringify(req.headers));
+        var query_data = url.parse(req.url, true).query;
+        var channel_id = query_data.channel_id;
+        var channel_name = query_data.channel_name;
+        var text = query_data.text;
+        var new_channel_name = text + '-' + channel_name;
+        var slack_token = process.env.slack_token;
+        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD']
+        var mutable = true
+        for (var i = 0; i < excluded_channels.length; i++) {
+          if (excluded_channels[i] === channel_id) {
+            mutable = false;
+          }
+        }
+        if (mutable){
+          // //url_change_name = '?token=&channel='+channel_id+'&name='+new_channel_name+'&pretty=1'
+          // request.post(
+          //     'https://slack.com/api/chat.postMessage?token='+slack_token+'&channel='+ channel_id +'&text=http://45.media.tumblr.com/tumblr_m5br53wRjA1rpugqso1_250.gif&pretty=1',
+          //     {},
+          //     function (error, response, body) {
+          //         if (!error && response.statusCode == 200) {
+          //             console.log("Success!")
+          //         }
+          //     }
+          // );
+          // sleep(3000);
+          request.post(
+              'https://slack.com/api/channels.rename?token='+slack_token+'&channel='+ channel_id +'&name='+new_channel_name+'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("Success!")
+                  }
+              }
+          );
+          request.post(
+              'https://slack.com/api/channels.archive?token='+slack_token+'&channel='+ channel_id +'&pretty=1',
+              {},
+              function (error, response, body) {
+                  if (!error && response.statusCode == 200) {
+                      console.log("Success!")
+                  }
+              }
+          );
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end('post received');
+        }
+        else {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.end("You can't solve this channel");
+        }
 
     str = str.toLowerCase();
     var result = '';
@@ -89,6 +177,13 @@ function CaesarCipher(str, num) {
     return result;
 
 }
+
+    }
+}).listen(process.env.PORT || 5000);
+//END AVOIDANCE
+
+
+
 
 function getOneAcross(def,cons, cb){
   var options = {
@@ -352,8 +447,10 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
-        words.pop();
-        words.pop();
+        if (words[words.length-1]=='B???'){
+          words.pop();
+          words.pop();
+        }
         bot.reply(message,"Results: " + words.join(', '));
       }
       getOneAcross(definition, constraint, processWords);
@@ -376,6 +473,8 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
   query = query.replace(/&amp;/g,"%26");
   query = query.replace(/&amp;/g,"%26");
   query = query.replace(/#/g,"%23");
+  query = query.replace(/“/g,'"');
+  query = query.replace(/”/g,'"');
   console.log(query);
   controller.storage.users.get(message.user,function(err,user) {
     if (!user) {
@@ -386,6 +485,13 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     controller.storage.users.save(user,function(err,id) {
       function processQuery(query){
         numResults = 5;
+        random_num = Math.random();
+        if (random_num < 0.01) {
+          bot.reply(message,"All your base are belong to us.");
+        } else if (random_num < 0.02) {
+          bot.reply(message,"Please welcome your new bot masters.");
+        }
+
         if (query.length < numResults){
           numResults = query.length;
         }
