@@ -406,8 +406,8 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
 })
 
 //Caesar Cipher
-controller.hears(['!ROT (\d+) (.*)'],'direct_message,direct_mention,mention,ambient',function(bot,message){
-  var matches = message.text.match(/!ROT (\d+) (.*)/i);
+controller.hears(['!ROT ([0-9]*) (.*)'],'direct_message,direct_mention,mention,ambient',function(bot,message){
+  var matches = message.text.match(/!ROT ([0-9]*) (.*)/i);
 
   var rotateBy = matches[1];
   var word = matches[2];
