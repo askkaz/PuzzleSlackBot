@@ -167,7 +167,7 @@ http.createServer(function (req, res) {
 }).listen(process.env.PORT || 5000);
 //END AVOIDANCE
 
-var caesarShift = function(str, amount) {
+function caesarShift (str, amount) {
 	if (amount < 0)
 		return caesarShift(str, amount + 26);
 
@@ -186,7 +186,7 @@ var caesarShift = function(str, amount) {
 		output += c;
 	}
 	return output;
-};
+}
 
 
 function getOneAcross(def,cons, cb){
