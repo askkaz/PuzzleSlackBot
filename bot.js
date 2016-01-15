@@ -419,7 +419,7 @@ controller.hears(['!ROT ([0-9]*) (.*)'],'direct_message,direct_mention,mention,a
       };
     }
     controller.storage.users.save(user,function(err,id) {
-      var rotWord = caesarShift(word, rotateBy);
+      var rotWord = caesarShift(word, parseInt(rotateBy));
       bot.reply(message, "Rotated by " + rotateBy + ": " + rotWord);
     });
   });
