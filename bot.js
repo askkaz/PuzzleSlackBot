@@ -101,7 +101,7 @@ http.createServer(function (req, res) {
                 {},
                 function (error, response, body) {
                     if (!error && response.statusCode == 200) {
-                        console.log(body)
+                        console.log(body);
                     }
                 }
             );
@@ -119,8 +119,8 @@ http.createServer(function (req, res) {
         var text = query_data.text;
         var new_channel_name = text + '-' + channel_name;
         var slack_token = process.env.slack_token;
-        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD']
-        var mutable = true
+        var excluded_channels = ['C0J3T86TY','C0J3T1ZMY', 'C0J6A8PF1','C0J44SUJD'];
+        var mutable = true;
         for (var i = 0; i < excluded_channels.length; i++) {
           if (excluded_channels[i] === channel_id) {
             mutable = false;
@@ -143,7 +143,7 @@ http.createServer(function (req, res) {
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
-                      console.log("Success!")
+                      console.log("Success!");
                   }
               }
           );
@@ -152,7 +152,7 @@ http.createServer(function (req, res) {
               {},
               function (error, response, body) {
                   if (!error && response.statusCode == 200) {
-                      console.log("Success!")
+                      console.log("Success!");
                   }
               }
           );
@@ -224,7 +224,7 @@ function getOneAcross(def,cons, cb){
         words.push(starEmoji.repeat(stars) + $(this).text());
       });
       cb(words);
-    })
+    });
   });
   req.on('error', function(e) {
     console.log('ERROR: ' + e.message);
@@ -264,7 +264,7 @@ function getNutrimatic(query, cb){
         words.push($(this).text());
       });
       cb(words);
-    })
+    });
   });
   req.on('error', function(e) {
     console.log('ERROR: ' + e.message);
@@ -305,7 +305,7 @@ controller.hears(['hello','hi'],'direct_message,direct_mention,mention',function
       bot.reply(message,"Hello.");
     }
   });
-})
+});
 
 controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',function(bot,message) {
   var matches = message.text.match(/call me (.*)/i);
@@ -318,13 +318,13 @@ controller.hears(['call me (.*)'],'direct_message,direct_mention,mention',functi
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     user.name = name;
     controller.storage.users.save(user,function(err,id) {
       bot.reply(message,"Got it. I will call you " + output + " from now on.");
-    })
-  })
+    });
+  });
 });
 
 controller.hears(['what is my name','who am i'],'direct_message,direct_mention,mention',function(bot,message) {
@@ -335,7 +335,7 @@ controller.hears(['what is my name','who am i'],'direct_message,direct_mention,m
     } else {
       bot.reply(message,"I don't know yet!");
     }
-  })
+  });
 });
 
 
@@ -361,9 +361,9 @@ controller.hears(['shutdown'],'direct_message,direct_mention,mention',function(b
           convo.next();
         }
       }
-    ])
-  })
-})
+    ]);
+  });
+});
 
 
 controller.hears(['uptime','identify yourself','who are you','what is your name'],'direct_message,direct_mention,mention',function(bot,message) {
@@ -373,7 +373,7 @@ controller.hears(['uptime','identify yourself','who are you','what is your name'
 
   bot.reply(message,':robot_face: I am a bot named <@' + bot.identity.name +'>. I have been running for ' + uptime + ' on ' + hostname + ".");
 
-})
+});
 
 function formatUptime(uptime) {
   var unit = 'second';
@@ -430,7 +430,7 @@ controller.hears(['!ROT ([0-9]*) ([a-zA-Z?]*)'],'direct_message,direct_mention,m
     }
     controller.storage.users.save(user,function(err,id) {
       word = word.toUpperCase();
-      var rotWord = CaesarCipher(word, rotateBy);
+      var rotWord = caesarShift(word, rotateBy);
       bot.reply(message, "Rotated by " + rotateBy + ": " + rotWord);
     });
   });
@@ -447,7 +447,7 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     controller.storage.users.save(user,function(err,id) {
       function processWords(words){
@@ -458,8 +458,8 @@ controller.hears(['!OA (.*) ([a-zA-Z0-9?]*)'],'direct_message,direct_mention,men
         bot.reply(message,"Results: " + words.join(', '));
       }
       getOneAcross(definition, constraint, processWords);
-    })
-  })
+    });
+  });
 });
 
 //NUTRIMATIC
@@ -484,7 +484,7 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
     if (!user) {
       user = {
         id: message.user,
-      }
+      };
     }
     controller.storage.users.save(user,function(err,id) {
       function processQuery(query){
@@ -507,6 +507,6 @@ controller.hears(['!NM (.*)'],'direct_message,direct_mention,mention,ambient',fu
         }
       }
       getNutrimatic(query, processQuery);
-    })
-  })
+    });
+  });
 });
