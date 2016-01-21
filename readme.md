@@ -1,3 +1,4 @@
+This repository is for the modification of Botkit for the 2016 MIT Mystery Hunt for the BAH Interlopers team.  It implements a bot interface for [Nutrimatic](http://www.nutrimatic.org), [OneAcross](http://www.oneacross.com), and ROT cipher.  It also implements a slash command for marking puzzle channels complete (with the answer prepended) and archives them.
 # [Botkit](http://howdy.ai/botkit) - Building Blocks for Building Bots
 
 Botkit designed to ease the process of designing and running useful, creative or
